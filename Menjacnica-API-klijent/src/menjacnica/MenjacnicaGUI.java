@@ -10,6 +10,7 @@ import java.util.Set;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
@@ -23,6 +24,8 @@ import com.google.gson.JsonParser;
 
 import menjacnica.util.URLConnectionUtil;
 import javax.swing.JButton;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class MenjacnicaGUI extends JFrame {
 
@@ -136,6 +139,20 @@ public class MenjacnicaGUI extends JFrame {
 	private JButton getBtnKonvertuj() {
 		if (btnKonvertuj == null) {
 			btnKonvertuj = new JButton("Konvertuj");
+			btnKonvertuj.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent arg0) {
+					Zemlja iz = (Zemlja)comboBoxIz.getSelectedItem();
+					Zemlja u = (Zemlja)comboBoxU.getSelectedItem();
+					
+					double kurs = vratiKurs(iz.getCurrencyID(), u.getCurrencyID());
+					if(kurs != -1) {
+						tfU.setText( String.valueOf(Double.parseDouble(tfIz.getText()) * kurs) );
+					} else {
+						System.out.println("Greksa");
+//						JOptionPane.showMessageDialog(this, "Doslo je do greske", "Greska", JOptionPane.WARNING_MESSAGE);
+					}
+				}
+			});
 			btnKonvertuj.setBounds(160, 215, 97, 25);
 		}
 		return btnKonvertuj;
@@ -156,17 +173,17 @@ public class MenjacnicaGUI extends JFrame {
 		JsonObject obj = res.get("results").getAsJsonObject();
 
 		Set<Entry<String, JsonElement>> attributeEntres = obj.entrySet();
-
+		
 		for (Entry<String, JsonElement> entry : obj.entrySet()) {
 		    String n = entry.getKey();
 		    JsonObject v = (JsonObject) entry.getValue();
 		    
 		    Zemlja z = new Zemlja();
-		    z.setAlpha3(v.get("alpha3").toString());
-		    z.setCurrencyID(v.get("currencyId").toString());
-		    z.setCurrencyName(v.get("currencyName").toString());
-		    z.setName(v.get("name").toString());
-		    z.setId(v.get("id").toString());
+		    z.setAlpha3(v.get("alpha3").toString().replaceAll("\"", ""));
+		    z.setCurrencyID(v.get("currencyId").toString().replaceAll("\"", ""));
+		    z.setCurrencyName(v.get("currencyName").toString().replaceAll("\"", ""));
+		    z.setName(v.get("name").toString().replaceAll("\"", ""));
+		    z.setId(v.get("id").toString().replaceAll("\"", ""));
 		    
 		    zemlje.add(z);
 		}
@@ -174,5 +191,30 @@ public class MenjacnicaGUI extends JFrame {
 		return zemlje;
 	}
 
+	
+	public double vratiKurs(String iz, String u) {
+		String url = "http://free.currencyconverterapi.com/api/v3/convert?q=" + iz + "_" + u;
+		Gson gson = new GsonBuilder().setPrettyPrinting().create();
+		
+		String rezultat = null;
+
+		try {
+			rezultat = URLConnectionUtil.getContent(url);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		JsonObject obj = gson.fromJson(rezultat, JsonObject.class);
+		JsonObject query = obj.get("query").getAsJsonObject();
+		JsonObject results = obj.get("results").getAsJsonObject();
+		
+		if(Integer.parseInt(query.get("count").toString()) == 0) {
+			return -1;
+		} else {
+			JsonObject p = (JsonObject) results.get(iz + "_" + u);
+			return Double.parseDouble(p.get("val").toString());
+		}
+		
+	}
 	
 }
