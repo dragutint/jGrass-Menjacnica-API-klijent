@@ -1,7 +1,12 @@
 package menjacnica;
 
 import java.awt.EventQueue;
+import java.io.BufferedWriter;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map.Entry;
@@ -19,9 +24,11 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
+import menjacnica.util.LogsJsonUtility;
 import menjacnica.util.URLConnectionUtil;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
@@ -151,6 +158,8 @@ public class MenjacnicaGUI extends JFrame {
 						System.out.println("Greksa");
 //						JOptionPane.showMessageDialog(this, "Doslo je do greske", "Greska", JOptionPane.WARNING_MESSAGE);
 					}
+
+					log(new GregorianCalendar(), iz.getCurrencyID(), u.getCurrencyID(), kurs);
 				}
 			});
 			btnKonvertuj.setBounds(160, 215, 97, 25);
@@ -191,7 +200,6 @@ public class MenjacnicaGUI extends JFrame {
 		return zemlje;
 	}
 
-	
 	public double vratiKurs(String iz, String u) {
 		String url = "http://free.currencyconverterapi.com/api/v3/convert?q=" + iz + "_" + u;
 		Gson gson = new GsonBuilder().setPrettyPrinting().create();
@@ -214,7 +222,39 @@ public class MenjacnicaGUI extends JFrame {
 			JsonObject p = (JsonObject) results.get(iz + "_" + u);
 			return Double.parseDouble(p.get("val").toString());
 		}
+	}
+	
+	public void log(GregorianCalendar vreme, String iz, String u, double kurs) {
+		Gson gson = new GsonBuilder().setPrettyPrinting().create();
 		
+		JsonArray logsArray = null;
+		LinkedList<Log> logs = new LinkedList<Log>(); 
+		
+		//deserijalizacija
+		try (FileReader reader = new FileReader("data/log.json")) {
+			logsArray = gson.fromJson(reader, JsonArray.class);
+			logs = LogsJsonUtility.parseLogs(logsArray);
+		} catch (Exception e) {
+			System.out.println("Greska: " + e.getMessage());
+		}
+	
+		//dodavanje novog loga
+		Log l = new Log();
+		l.setDatumVreme(vreme);
+		l.setIzValuta(iz);
+		l.setuValuta(u);
+		l.setKurs(kurs);
+		logs.add(l);
+		
+		// serijalizacija
+		JsonArray array = LogsJsonUtility.serializeLogs(logs);
+		try (PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter("data/log.json")))) {
+			String arrayString = gson.toJson(array);
+			
+			out.println(arrayString);
+		} catch (Exception e) {
+			System.out.println("Greska: " + e.getMessage());
+		}
 	}
 	
 }
