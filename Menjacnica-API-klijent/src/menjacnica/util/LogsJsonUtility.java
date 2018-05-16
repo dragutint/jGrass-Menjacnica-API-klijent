@@ -11,7 +11,7 @@ import java.util.LinkedList;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
-import menjacnica.Log;
+import menjacnica.klase.Log;
 
 public class LogsJsonUtility {
 

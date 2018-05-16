@@ -1,8 +1,0 @@
-[
-  {
-    "datumVreme": "java.util.GregorianCalendar[time\u003d1526373318923,areFieldsSet\u003dtrue,areAllFieldsSet\u003dtrue,lenient\u003dtrue,zone\u003dsun.util.calendar.ZoneInfo[id\u003d\"Europe/Prague\",offset\u003d3600000,dstSavings\u003d3600000,useDaylight\u003dtrue,transitions\u003d141,lastRule\u003djava.util.SimpleTimeZone[id\u003dEurope/Prague,offset\u003d3600000,dstSavings\u003d3600000,useDaylight\u003dtrue,startYear\u003d0,startMode\u003d2,startMonth\u003d2,startDay\u003d-1,startDayOfWeek\u003d1,startTime\u003d3600000,startTimeMode\u003d2,endMode\u003d2,endMonth\u003d9,endDay\u003d-1,endDayOfWeek\u003d1,endTime\u003d3600000,endTimeMode\u003d2]],firstDayOfWeek\u003d1,minimalDaysInFirstWeek\u003d1,ERA\u003d1,YEAR\u003d2018,MONTH\u003d4,WEEK_OF_YEAR\u003d20,WEEK_OF_MONTH\u003d3,DAY_OF_MONTH\u003d15,DAY_OF_YEAR\u003d135,DAY_OF_WEEK\u003d3,DAY_OF_WEEK_IN_MONTH\u003d3,AM_PM\u003d0,HOUR\u003d10,HOUR_OF_DAY\u003d10,MINUTE\u003d35,SECOND\u003d18,MILLISECOND\u003d923,ZONE_OFFSET\u003d3600000,DST_OFFSET\u003d3600000]",
-    "izValuta": "BRL",
-    "uValuta": "AFN",
-    "kurs": 19.571026
-  }
-]

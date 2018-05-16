@@ -1,4 +1,4 @@
-package menjacnica;
+package menjacnica.klase;
 
 import java.util.GregorianCalendar;
 
